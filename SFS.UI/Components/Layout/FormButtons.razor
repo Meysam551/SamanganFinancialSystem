@@ -1,0 +1,67 @@
+﻿<!-- FormButtons.razor -->
+@foreach (var buttonType in ActiveButtons)
+{
+    switch (buttonType)
+    {
+        case ButtonType.Delete:
+            <a href="" class="disable" @onclick="Delete">حذف</a>
+            break;
+        case ButtonType.Copy:
+            <a href="" class="disable" @onclick="Copy">کپی</a>
+            break;
+        case ButtonType.BankForm:
+            <a href="" class="disable" @onclick="BankForm">فرم بانک</a>
+            break;
+        case ButtonType.Search:
+            <a href="" class="disable" @onclick="Search">جستجو</a>
+            break;
+        case ButtonType.Print:
+            <a href="" class="disable" @onclick="Print">چاپ</a>
+            break;
+        case ButtonType.Reload:
+            <a href="" @onclick="Reload">بازخوانی</a>
+            break;
+        case ButtonType.Archive:
+            <a href="" class="disable" @onclick="Archive">آرشیو</a>
+            break;
+    }
+}
+
+@code {
+    [Parameter]
+    public List<ButtonType> ActiveButtons { get; set; } = new List<ButtonType>();
+
+    public enum ButtonType
+    {
+        Delete,
+        Copy,
+        BankForm,
+        Search,
+        Print,
+        Reload,
+        Archive
+    }
+
+    [Parameter]
+    public EventCallback OnDelete { get; set; }
+    [Parameter]
+    public EventCallback OnCopy { get; set; }
+    [Parameter]
+    public EventCallback OnBankForm { get; set; }
+    [Parameter]
+    public EventCallback OnSearch { get; set; }
+    [Parameter]
+    public EventCallback OnPrint { get; set; }
+    [Parameter]
+    public EventCallback OnReload { get; set; }
+    [Parameter]
+    public EventCallback OnArchive { get; set; }
+
+    private async Task Delete() => await OnDelete.InvokeAsync();
+    private async Task Copy() => await OnCopy.InvokeAsync();
+    private async Task BankForm() => await OnBankForm.InvokeAsync();
+    private async Task Search() => await OnSearch.InvokeAsync();
+    private async Task Print() => await OnPrint.InvokeAsync();
+    private async Task Reload() => await OnReload.InvokeAsync();
+    private async Task Archive() => await OnArchive.InvokeAsync();
+}

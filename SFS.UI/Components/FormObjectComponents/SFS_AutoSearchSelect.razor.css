@@ -1,0 +1,30 @@
+﻿.auto-search-container {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: block;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background: white;
+}
+
+.dropdown-item {
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: right;
+    padding: 8px 12px;
+}
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }

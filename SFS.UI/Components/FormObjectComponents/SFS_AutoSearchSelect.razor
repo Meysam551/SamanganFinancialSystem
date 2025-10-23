@@ -1,0 +1,55 @@
+﻿@typeparam TItem
+@typeparam TValue
+
+<div style="position: relative; width: 300px;">
+    <label>@Label</label>
+    <input @oninput="OnInput" class="form-control" placeholder="@Placeholder" />
+
+    @if (_showDropdown)
+    {
+        <div style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; z-index: 1000;">
+            @foreach (var item in _items)
+            {
+                <div @onclick="() => SelectItem(item)" style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee;">
+                    @TextSelector(item)
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = "جستجو";
+    [Parameter] public string Placeholder { get; set; } = "جستجو...";
+    [Parameter] public Func<string, Task<IEnumerable<TItem>>> SearchMethod { get; set; }
+    [Parameter] public Func<TItem, TValue> ValueSelector { get; set; }
+    [Parameter] public Func<TItem, string> TextSelector { get; set; }
+    [Parameter] public TValue Value { get; set; }
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+
+    private bool _showDropdown = false;
+    private List<TItem> _items = new();
+
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        var searchText = e.Value?.ToString();
+
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            _showDropdown = false;
+            return;
+        }
+
+        var results = await SearchMethod(searchText);
+        _items = results.ToList();
+        _showDropdown = true;
+        StateHasChanged();
+    }
+
+    private async Task SelectItem(TItem item)
+    {
+        _showDropdown = false;
+        await ValueChanged.InvokeAsync(ValueSelector(item));
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,69 @@
+﻿
+@typeparam TItem
+@typeparam TValue
+
+<label>@Label</label>
+<select class="@Class" @onchange="OnChange">
+    @if (!string.IsNullOrEmpty(Placeholder))
+    {
+        <option value="">@Placeholder</option>
+    }
+
+    @foreach (var item in Items ?? Enumerable.Empty<TItem>())
+    {
+        var val = ValueSelector(item);
+        var text = TextSelector(item);
+        var stringVal = val?.ToString();
+
+        <option value="@stringVal" selected="@(object.Equals(val, Value))">@text</option>
+    }
+</select>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+    [Parameter] public string Class { get; set; } = "form-select";
+
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+
+    [Parameter] public Func<TItem, TValue>? ValueSelector { get; set; }
+    [Parameter] public Func<TItem, string>? TextSelector { get; set; }
+
+    // 👇 این سه‌تا پراپرتی حیاتی برای bind-Value هستند
+    [Parameter] public TValue Value { get; set; }
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public Expression<Func<TValue>>? ValueExpression { get; set; }
+
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        var strValue = e.Value?.ToString();
+        TValue convertedValue = default!;
+
+        try
+        {
+            if (typeof(TValue).IsEnum)
+            {
+                convertedValue = (TValue)Enum.Parse(typeof(TValue), strValue ?? string.Empty);
+            }
+            else if (typeof(TValue) == typeof(Guid))
+            {
+                convertedValue = (TValue)(object)Guid.Parse(strValue!);
+            }
+            else if (typeof(TValue) == typeof(string))
+            {
+                convertedValue = (TValue)(object?)strValue!;
+            }
+            else
+            {
+                convertedValue = (TValue)Convert.ChangeType(strValue, typeof(TValue));
+            }
+        }
+        catch
+        {
+            // اگر نتونست تبدیل کنه، مقدار پیش‌فرض می‌مونه
+        }
+
+        Value = convertedValue;
+        await ValueChanged.InvokeAsync(convertedValue);
+    }
+}

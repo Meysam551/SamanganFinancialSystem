@@ -1,7 +1,126 @@
 ﻿@page "/"
+@using static SFS.UI.Components.Layout.FormButtons
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div id="top-sec" class="clearfix">
+    
+    <MainMenu />
+    
+    <span class="sep"></span>
+    
+    <SFS_PageTitle />
 
-Welcome to your new app.
+    <QuickAccessMenu />
+
+</div>
+
+<div id="info" class="clearfix">
+    <ApplicationUserInfo />
+</div>
+
+<div id="btns">
+    <FormButtons ActiveButtons="@(new List<FormButtons.ButtonType> {
+                         FormButtons.ButtonType.Delete,
+                         FormButtons.ButtonType.Search,
+                         FormButtons.ButtonType.Reload
+                     })"
+                 OnDelete="HandleDelete" />
+</div>
+
+<div id="content">
+    <div id="part1">
+
+        <SFS_Select TItem="int" TValue="int"
+               Label="سال مالی"
+               Items="years"
+               ValueSelector="@(y => y)"
+               TextSelector="@(y => $"{y}")"
+               @bind-Value="selectedYear" />
+
+        <SFS_Select TItem="string" TValue="string"
+                    Label="نوع ارز"
+                    Items="currencyTypes"
+                    ValueSelector="@(y => y)"
+                    TextSelector="@(y => $"{y}")"
+                    @bind-Value="selectedCurrency" />
+
+        <SFS_AutoSearchSelect TItem="CustomerDto" TValue="Guid"
+                              Label="مشتری"
+                              SearchMethod="LoadCustomers"
+                              ValueSelector="@(c => c.Id)"
+                              TextSelector="@(c => c.Name)"
+                              @bind-Value="selectedCustomerId" />
+
+        <label>سریال سند # شماره سند</label>
+        <input type="text" />
+        <a href="">آخرین شماره</a>
+        <label>تاریخ سند</label>
+        <input type="text" />
+        <label>مبلغ سند</label>
+        <input type="text" />
+    </div>
+    <div id="part2">
+        <label>در وجه</label>
+        <input type="text" />
+    </div>
+    <div id="part3">
+        <label>بابت:</label>
+        <input type="text" />
+        <a href="">از لیست</a>
+        <button>ذخیره</button>
+    </div>
+</div>
+
+<SFS_Grid />
+
+@code {
+    private List<int> years = new() { 1402, 1403, 1404 };
+    private int selectedYear = 1403;
+
+    private List<string> currencyTypes = new() { "ریال", "دلار", "یورو" };
+    private string selectedCurrency = "ریال";
+
+    private Guid selectedCustomerId;
+
+    private async Task<IEnumerable<CustomerDto>> LoadCustomers(string search)
+    {
+        // اینجا از دیتابیس یا سرویس خودت استفاده کن
+        return new List<CustomerDto>
+        {
+            new CustomerDto { Id = Guid.NewGuid(), Name = "مشتری اول" },
+            new CustomerDto { Id = Guid.NewGuid(), Name = "مشتری دوم" }
+        }.Where(x => x.Name.Contains(search));
+    }
+
+    public class CustomerDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = "";
+    }
+
+    private async Task HandleDelete()
+    {
+        // کد کامل مربوط به حذف
+        try
+        {
+            Console.WriteLine("شروع عملیات حذف...");
+
+            // مثال: حذف از دیتابیس
+            // await _dataService.DeleteItemAsync(selectedItemId);
+
+            // نمایش پیام موفقیت
+            // await ShowSuccessMessage("آیتم با موفقیت حذف شد");
+
+            // رفرش داده‌ها
+            // await LoadData();
+
+            Console.WriteLine("عملیات حذف با موفقیت انجام شد");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"خطا در حذف: {ex.Message}");
+            // await ShowErrorMessage("خطا در حذف آیتم");
+        }
+    }
+}
