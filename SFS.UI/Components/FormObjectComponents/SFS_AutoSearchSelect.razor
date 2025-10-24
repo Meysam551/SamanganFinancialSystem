@@ -1,55 +1,78 @@
 ﻿@typeparam TItem
 @typeparam TValue
 
-<div style="position: relative; width: 300px;">
-    <label>@Label</label>
-    <input @oninput="OnInput" class="form-control" placeholder="@Placeholder" />
+<div class="form-group mb-1 position-relative">
+    <label class="form-label small">@Label</label>
+    <input type="text"
+           class="form-control form-control-sm"
+           style="direction: rtl; text-align: right;"
+           placeholder="@Placeholder"
+           value="@searchText"
+           @oninput="OnSearchChanged"
+           @onfocus="() => showDropdown = true"
+           @onblur="HideDropdownDelayed" />
 
-    @if (_showDropdown)
+    @if (showDropdown)
     {
-        <div style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; z-index: 1000;">
-            @foreach (var item in _items)
+        <div class="list-group position-absolute w-100 shadow-sm"
+             style="z-index:1000; max-height:180px; overflow:auto;">
+            @foreach (var item in FilteredItems)
             {
-                <div @onclick="() => SelectItem(item)" style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee;">
+                <button type="button"
+                        class="list-group-item list-group-item-action py-1 px-2"
+                        style="font-size:0.85rem;"
+                        @onclick="() => SelectItem(item)">
                     @TextSelector(item)
-                </div>
+                </button>
             }
         </div>
     }
 </div>
 
+
 @code {
-    [Parameter] public string Label { get; set; } = "جستجو";
+    [Parameter] public string Label { get; set; } = string.Empty;
     [Parameter] public string Placeholder { get; set; } = "جستجو...";
-    [Parameter] public Func<string, Task<IEnumerable<TItem>>> SearchMethod { get; set; }
-    [Parameter] public Func<TItem, TValue> ValueSelector { get; set; }
-    [Parameter] public Func<TItem, string> TextSelector { get; set; }
-    [Parameter] public TValue Value { get; set; }
-    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+    [Parameter] public Func<string, Task<IEnumerable<TItem>>>? LoadItemsAsync { get; set; }
+    [Parameter] public Func<TItem, TValue> ValueSelector { get; set; } = default!;
+    [Parameter] public Func<TItem, string> TextSelector { get; set; } = default!;
+    [Parameter] public TValue? Value { get; set; }
+    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
 
-    private bool _showDropdown = false;
-    private List<TItem> _items = new();
+    private bool showDropdown;
+    private bool isLoading;
+    private string searchText = string.Empty;
+    private List<TItem> FilteredItems = new();
 
-    private async Task OnInput(ChangeEventArgs e)
+    private async Task OnSearchChanged(ChangeEventArgs e)
     {
-        var searchText = e.Value?.ToString();
+        searchText = e.Value?.ToString() ?? string.Empty;
+        showDropdown = true;
+        isLoading = true;
+        StateHasChanged();
 
-        if (string.IsNullOrWhiteSpace(searchText))
-        {
-            _showDropdown = false;
-            return;
-        }
+        if (LoadItemsAsync != null)
+            FilteredItems = (await LoadItemsAsync(searchText)).ToList();
+        else if (Items != null)
+            FilteredItems = Items.Where(i => TextSelector(i).Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
 
-        var results = await SearchMethod(searchText);
-        _items = results.ToList();
-        _showDropdown = true;
+        isLoading = false;
         StateHasChanged();
     }
 
     private async Task SelectItem(TItem item)
     {
-        _showDropdown = false;
-        await ValueChanged.InvokeAsync(ValueSelector(item));
+        Value = ValueSelector(item);
+        searchText = TextSelector(item);
+        showDropdown = false;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async void HideDropdownDelayed()
+    {
+        await Task.Delay(200);
+        showDropdown = false;
         StateHasChanged();
     }
 }

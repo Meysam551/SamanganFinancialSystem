@@ -22,7 +22,7 @@
 @code {
     [Parameter] public string Label { get; set; } = string.Empty;
     [Parameter] public string Placeholder { get; set; } = string.Empty;
-    [Parameter] public string Class { get; set; } = "form-select";
+    [Parameter] public string Class { get; set; } //= "form-select";
 
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
 

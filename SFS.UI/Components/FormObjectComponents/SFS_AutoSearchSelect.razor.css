@@ -20,7 +20,7 @@
     cursor: pointer;
     border: none;
     background: none;
-    width: 100%;
+    width: auto;
     text-align: right;
     padding: 8px 12px;
 }
