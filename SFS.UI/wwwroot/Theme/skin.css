@@ -16,7 +16,7 @@ body {color:#000;font-size:12px;font-family:Tahoma;line-height:25px;background-c
 #top-sec .left a {float:left}
 #top-sec .sep {    display: block;
     width: 2px;
-    height: 40px;
+    height: 35px;
     background-color: #fff;
     float: right;
     margin: -7px 22px;
@@ -41,8 +41,8 @@ body {color:#000;font-size:12px;font-family:Tahoma;line-height:25px;background-c
 #content #part1 {padding:0 10px;}
 #content #part1 label:first-child ,#part3 label:first-child {width:70px;text-align:left}
 #content #part1 label {margin-right:10px;}
-#content #part1 input {width:200px;padding:0 5px;}
-#part2 ,#part3 {padding:2px;display:-webkit-box;display:-ms-flexbox;display:flex;}
+#content #part1 input {width:100px;padding:0 5px;}
+#part2 ,#part3 {padding:10px;display:-webkit-box;display:-ms-flexbox;display:flex;}
 #part2 label { width: 75px;
     display: inline-block;
     text-align: left;
@@ -56,3 +56,28 @@ body {color:#000;font-size:12px;font-family:Tahoma;line-height:25px;background-c
 .table1 th {background-color:#cee0fb;color:#04127c;}
 .table1 th:nth-child(1) ,.table1 th:nth-child(2) ,.table1 th:nth-child(3) {width:7%}
 .table1 th:nth-child(5) ,.table1 th:nth-child(6) ,.table1 th:nth-child(7) {width:7%}
+#menu {float:right;position:relative;}
+#menu li ul {display:none;list-style:none;padding:0;margin:0}
+#menu > ul > li >  a {    display: block;
+    height: 21px;
+    padding: 0 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    margin-top: -1px;
+    line-height: 16px;}
+#menu ul li ul {
+    position: absolute;
+    width: 200px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    right: 0;
+    top: 100%;}
+#menu ul li ul li {position:relative;}
+#menu ul li ul li a {display:block;padding:2px}
+#menu ul li ul li:hover > a {background-color:#ecf4ff;}
+#menu li:hover > ul {display:block}
+#menu > ul > li > ul > li ul {
+    right:100%;
+    top:0
+}
