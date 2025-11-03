@@ -1,5 +1,5 @@
 ﻿
-namespace SFS.Shared.Dtos;
+namespace SFS.Shared;
 
 public class DocTypeDetailDto
 {

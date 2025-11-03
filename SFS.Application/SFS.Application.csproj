@@ -1,9 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="DocHead\Commands\" />
+    <Folder Include="DocType\Commands\" />
+    <Folder Include="Voucher\Commands\" />
+    <Folder Include="Voucher\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ErrorOr" Version="2.0.1" />
+    <PackageReference Include="MediatR" Version="13.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SFS.Infrastructure\SFS.Infrastructure.csproj" />
+    <ProjectReference Include="..\SFS.Shared\SFS.Shared.csproj" />
+  </ItemGroup>
 
 </Project>
